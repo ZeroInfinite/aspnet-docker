@@ -7,14 +7,20 @@ set -e  # Exit immediately upon failure
 cd $1
 
 echo "Testing framework-dependent deployment"
-if [[ $2 == "1.1-build-msbuild" ]]; then
-    dotnet new3 web --framework 1.1
+if [[ "$(dotnet --version)" != "1.0.0-preview2"* ]]; then
+    if [[ $2 == "1.1" ]]; then
+        framework='netcoreapp1.1'
+    else
+        framework='netcoreapp1.0'
+    fi
+    dotnet new web --framework $framework
 else
     dotnet new -t web
 fi
 
-dotnet restore /p:RuntimeIdentifiers=debian.8-x64
-dotnet publish -o publish/framework-dependent
+dotnet msbuild "/t:Restore;Publish" \
+       "/p:RuntimeIdentifiers=debian.8-x64" \
+       "/p:PublishDir=publish/framework-dependent"
 
 echo "Testing self-contained deployment"
 if [[ $2 == *"projectjson"* ]]; then
