@@ -7,11 +7,13 @@ repo_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
 
 function WaitForSuccess {
+    # wait 2 minutes max
     for i in $(seq 60); do
         echo '.'
         curl --silent --output /dev/null $1 && return 0
-        sleep 1
+        sleep 2
     done
+    echo "Timed out waiting for response on $1"
     return 1
 }
 
