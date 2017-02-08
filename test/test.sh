@@ -37,12 +37,12 @@ for sdk_tag in $( find . -path './.*' -prune -o -path '*/jessie/build-msbuild/Do
 
     echo "----- Testing ${runtime_tag} with ${sdk_tag} app -----"
     docker run -d -t -v "${app_dir}:/${app_name}" --workdir /${app_name} --name "runtime-test-${app_name}" -p 5000:80 --entrypoint dotnet "${runtime_tag}" "/${app_name}/publish/framework-dependent/${app_name}.dll"
-    WaitForSuccess "http://localhost:5000"
+    WaitForSuccess "http://127.0.0.1:5000"
     docker stop "runtime-test-${app_name}"
 
     echo "----- Testing ${runtime_tag} with standalone ${sdk_tag} app -----"
     docker run -d -t -v "${app_dir}:/${app_name}" --workdir /${app_name} --name "runtime-standalone-test-${app_name}" -p 5000:80 --entrypoint "/${app_name}/publish/self-contained/${app_name}" "${runtime_tag}"
-    WaitForSuccess "http://localhost:5000"
+    WaitForSuccess "http://127.0.0.1:5000"
     docker stop "runtime-standalone-test-${app_name}"
 
 done
